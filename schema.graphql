@@ -34,6 +34,7 @@ extend schema
 
 type Query {
   allQuizzes: [Quiz!]!
+  leaderboardForQuiz(id: ID!): Leaderboard
 }
 
 type Quiz @key(fields: "id") {
@@ -43,11 +44,13 @@ type Quiz @key(fields: "id") {
 
 type Mutation {
   postQuestion: Question
+  updateLeaderboardForQuiz(id: ID!): Leaderboard
 }
 
 type Subscription {
   "Listens for changes in what question to show now"
   questionPosted: Question
+  leaderboardForQuiz(id: ID!): Leaderboard
 }
 
 type Question @key(fields: "id") {
@@ -59,4 +62,15 @@ type Question @key(fields: "id") {
 type Choice {
   id: ID!
   text: String!
+}
+
+type Player {
+  name: String!
+  points: Int
+  rank: Int
+}
+
+type Leaderboard {
+  quiz: Quiz
+  list: [Player]
 }

@@ -7,6 +7,7 @@ export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: 
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
 export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
+export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: { input: string; output: string; }
@@ -23,14 +24,39 @@ export type Choice = {
   text: Scalars['String']['output'];
 };
 
+export type Leaderboard = {
+  __typename?: 'Leaderboard';
+  list?: Maybe<Array<Maybe<Player>>>;
+  quiz?: Maybe<Quiz>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   postQuestion?: Maybe<Question>;
+  updateLeaderboardForQuiz?: Maybe<Leaderboard>;
+};
+
+
+export type MutationUpdateLeaderboardForQuizArgs = {
+  id: Scalars['ID']['input'];
+};
+
+export type Player = {
+  __typename?: 'Player';
+  name: Scalars['String']['output'];
+  points?: Maybe<Scalars['Int']['output']>;
+  rank?: Maybe<Scalars['Int']['output']>;
 };
 
 export type Query = {
   __typename?: 'Query';
   allQuizzes: Array<Quiz>;
+  leaderboardForQuiz?: Maybe<Leaderboard>;
+};
+
+
+export type QueryLeaderboardForQuizArgs = {
+  id: Scalars['ID']['input'];
 };
 
 export type Question = {
@@ -48,8 +74,14 @@ export type Quiz = {
 
 export type Subscription = {
   __typename?: 'Subscription';
+  leaderboardForQuiz?: Maybe<Leaderboard>;
   /** Listens for changes in what question to show now */
   questionPosted?: Maybe<Question>;
+};
+
+
+export type SubscriptionLeaderboardForQuizArgs = {
+  id: Scalars['ID']['input'];
 };
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
@@ -138,7 +170,10 @@ export type ResolversTypes = ResolversObject<{
   Choice: ResolverTypeWrapper<Choice>;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
+  Leaderboard: ResolverTypeWrapper<Leaderboard>;
   Mutation: ResolverTypeWrapper<{}>;
+  Player: ResolverTypeWrapper<Player>;
+  Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   Query: ResolverTypeWrapper<{}>;
   Question: ResolverTypeWrapper<Question>;
   Quiz: ResolverTypeWrapper<Quiz>;
@@ -151,7 +186,10 @@ export type ResolversParentTypes = ResolversObject<{
   Choice: Choice;
   ID: Scalars['ID']['output'];
   String: Scalars['String']['output'];
+  Leaderboard: Leaderboard;
   Mutation: {};
+  Player: Player;
+  Int: Scalars['Int']['output'];
   Query: {};
   Question: Question;
   Quiz: Quiz;
@@ -173,12 +211,27 @@ export type ChoiceResolvers<ContextType = DataSourceContext, ParentType extends 
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type LeaderboardResolvers<ContextType = DataSourceContext, ParentType extends ResolversParentTypes['Leaderboard'] = ResolversParentTypes['Leaderboard']> = ResolversObject<{
+  list?: Resolver<Maybe<Array<Maybe<ResolversTypes['Player']>>>, ParentType, ContextType>;
+  quiz?: Resolver<Maybe<ResolversTypes['Quiz']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type MutationResolvers<ContextType = DataSourceContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   postQuestion?: Resolver<Maybe<ResolversTypes['Question']>, ParentType, ContextType>;
+  updateLeaderboardForQuiz?: Resolver<Maybe<ResolversTypes['Leaderboard']>, ParentType, ContextType, RequireFields<MutationUpdateLeaderboardForQuizArgs, 'id'>>;
+}>;
+
+export type PlayerResolvers<ContextType = DataSourceContext, ParentType extends ResolversParentTypes['Player'] = ResolversParentTypes['Player']> = ResolversObject<{
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  points?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  rank?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type QueryResolvers<ContextType = DataSourceContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   allQuizzes?: Resolver<Array<ResolversTypes['Quiz']>, ParentType, ContextType>;
+  leaderboardForQuiz?: Resolver<Maybe<ResolversTypes['Leaderboard']>, ParentType, ContextType, RequireFields<QueryLeaderboardForQuizArgs, 'id'>>;
 }>;
 
 export type QuestionResolvers<ContextType = DataSourceContext, ParentType extends ResolversParentTypes['Question'] = ResolversParentTypes['Question']> = ResolversObject<{
@@ -197,12 +250,15 @@ export type QuizResolvers<ContextType = DataSourceContext, ParentType extends Re
 }>;
 
 export type SubscriptionResolvers<ContextType = DataSourceContext, ParentType extends ResolversParentTypes['Subscription'] = ResolversParentTypes['Subscription']> = ResolversObject<{
+  leaderboardForQuiz?: SubscriptionResolver<Maybe<ResolversTypes['Leaderboard']>, "leaderboardForQuiz", ParentType, ContextType, RequireFields<SubscriptionLeaderboardForQuizArgs, 'id'>>;
   questionPosted?: SubscriptionResolver<Maybe<ResolversTypes['Question']>, "questionPosted", ParentType, ContextType>;
 }>;
 
 export type Resolvers<ContextType = DataSourceContext> = ResolversObject<{
   Choice?: ChoiceResolvers<ContextType>;
+  Leaderboard?: LeaderboardResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
+  Player?: PlayerResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Question?: QuestionResolvers<ContextType>;
   Quiz?: QuizResolvers<ContextType>;
