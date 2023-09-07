@@ -24,13 +24,22 @@ type Mutation {
 }
 
 type Query {
+  """
+  Get the list of all available quizzes
+  """
   allQuizzes: [Quiz!]!
+  """
+  Get the leaderboard for a quiz
+  """
   leaderboardForQuiz(id: ID!): Leaderboard
 }
 
 type Subscription {
   "Listens for changes in what question to show now for a quiz"
   newQuestion(quizId: ID!): Question!
+  """
+  Listens the leaderboard for a quiz
+  """
   leaderboardForQuiz(id: ID!): Leaderboard!
 }
 
@@ -41,7 +50,13 @@ type Question @key(fields: "id") {
 }
 
 type Response {
+  """
+  Was it the right answer
+  """
   success: Boolean!
+  """
+  What was the right choice
+  """
   right_choice: Choice!
 }
 

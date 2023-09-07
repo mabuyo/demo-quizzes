@@ -60,6 +60,7 @@ type Mutation
   @join__type(graph: PLAYER)
   @join__type(graph: QUIZ)
 {
+  """Join a quiz with a username"""
   createPlayer(userName: String, quizId: ID!): Player @join__field(graph: PLAYER)
 
   """For an user who answers to a question in a quiz"""
@@ -84,9 +85,18 @@ type Query
   @join__type(graph: PLAYER)
   @join__type(graph: QUIZ)
 {
+  """Get the data for a specific player"""
   player(playerId: ID!): Player @join__field(graph: PLAYER)
+
+  """
+  Get the list of all players for a quiz (to know how much players we have for that quiz)
+  """
   playersForAQuiz(quizId: ID!): [Player!]! @join__field(graph: PLAYER)
+
+  """Get the list of all available quizzes"""
   allQuizzes: [Quiz!]! @join__field(graph: QUIZ)
+
+  """Get the leaderboard for a quiz"""
   leaderboardForQuiz(id: ID!): Leaderboard @join__field(graph: QUIZ)
 }
 
@@ -109,7 +119,10 @@ type Quiz
 type Response
   @join__type(graph: QUIZ)
 {
+  """Was it the right answer"""
   success: Boolean!
+
+  """What was the right choice"""
   right_choice: Choice!
 }
 
@@ -117,9 +130,14 @@ type Subscription
   @join__type(graph: PLAYER)
   @join__type(graph: QUIZ)
 {
+  """
+  Listen to the list of all players for a quiz (to know how much players we have for that quiz)
+  """
   playersForAQuiz(quizId: ID!): [Player!]! @join__field(graph: PLAYER)
 
   """Listens for changes in what question to show now for a quiz"""
   newQuestion(quizId: ID!): Question! @join__field(graph: QUIZ)
+
+  """Listens the leaderboard for a quiz"""
   leaderboardForQuiz(id: ID!): Leaderboard! @join__field(graph: QUIZ)
 }
