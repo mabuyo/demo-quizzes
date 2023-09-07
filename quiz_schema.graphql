@@ -20,7 +20,7 @@ type Mutation {
   "For an user who answers to a question in a quiz"
   answer(quizId: ID!, questionId: ID!, choiceId: ID!): Boolean
   "For admin to trigger the next question"
-  nextQuestion(quizId: ID!): Question!
+  nextQuestion(quizId: ID!): Question
 }
 
 type Query {
