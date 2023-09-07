@@ -18,7 +18,7 @@ extend schema
 
 type Mutation {
   "For an user who answers to a question in a quiz"
-  answer(quizId: ID!, questionId: ID!, choiceId: ID!): Boolean
+  answer(quizId: ID!, questionId: ID!, choiceId: ID): Response!
   "For admin to trigger the next question"
   nextQuestion(quizId: ID!): Question
 }
@@ -38,6 +38,11 @@ type Question @key(fields: "id") {
   id: ID!
   title: String!
   choices: [Choice!]!
+}
+
+type Response {
+  success: Boolean!
+  right_choice: Choice!
 }
 
 type Choice {

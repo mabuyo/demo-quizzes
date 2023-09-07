@@ -1,6 +1,7 @@
 schema
   @link(url: "https://specs.apollo.dev/link/v1.0")
-  @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) {
+  @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+{
   query: Query
   mutation: Mutation
   subscription: Subscription
@@ -8,44 +9,21 @@ schema
 
 directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
-directive @join__field(
-  graph: join__Graph
-  requires: join__FieldSet
-  provides: join__FieldSet
-  type: String
-  external: Boolean
-  override: String
-  usedOverridden: Boolean
-) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+directive @join__field(graph: join__Graph, requires: join__FieldSet, provides: join__FieldSet, type: String, external: Boolean, override: String, usedOverridden: Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 
 directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-directive @join__implements(
-  graph: join__Graph!
-  interface: String!
-) repeatable on OBJECT | INTERFACE
+directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
 
-directive @join__type(
-  graph: join__Graph!
-  key: join__FieldSet
-  extension: Boolean! = false
-  resolvable: Boolean! = true
-  isInterfaceObject: Boolean! = false
-) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+directive @join__type(graph: join__Graph!, key: join__FieldSet, extension: Boolean! = false, resolvable: Boolean! = true, isInterfaceObject: Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
 
-directive @join__unionMember(
-  graph: join__Graph!
-  member: String!
-) repeatable on UNION
+directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
 
-directive @link(
-  url: String
-  as: String
-  for: link__Purpose
-  import: [link__Import]
-) repeatable on SCHEMA
+directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
 
-type Choice @join__type(graph: QUIZ) {
+type Choice
+  @join__type(graph: QUIZ)
+{
   id: ID!
   text: String!
 }
@@ -57,7 +35,9 @@ enum join__Graph {
   QUIZ @join__graph(name: "quiz", url: "http://localhost:4001")
 }
 
-type Leaderboard @join__type(graph: QUIZ) {
+type Leaderboard
+  @join__type(graph: QUIZ)
+{
   quiz: Quiz!
   list: [Player!]!
 }
@@ -76,52 +56,70 @@ enum link__Purpose {
   EXECUTION
 }
 
-type Mutation @join__type(graph: PLAYER) @join__type(graph: QUIZ) {
-  createPlayer(userName: String): Player @join__field(graph: PLAYER)
+type Mutation
+  @join__type(graph: PLAYER)
+  @join__type(graph: QUIZ)
+{
+  createPlayer(userName: String, quizId: ID!): Player @join__field(graph: PLAYER)
 
-  """
-  For an user who answers to a question in a quiz
-  """
-  answer(quizId: ID!, questionId: ID!, choiceId: ID!): Boolean
-    @join__field(graph: QUIZ)
+  """For an user who answers to a question in a quiz"""
+  answer(quizId: ID!, questionId: ID!, choiceId: ID): Response! @join__field(graph: QUIZ)
 
-  """
-  For admin to trigger the next question
-  """
+  """For admin to trigger the next question"""
   nextQuestion(quizId: ID!): Question @join__field(graph: QUIZ)
 }
 
 type Player
   @join__type(graph: PLAYER, key: "id")
-  @join__type(graph: QUIZ, key: "id") {
+  @join__type(graph: QUIZ, key: "id")
+{
   id: ID!
   name: String! @join__field(graph: PLAYER)
+  quizId: ID! @join__field(graph: PLAYER)
   points: Int @join__field(graph: QUIZ)
   rank: Int @join__field(graph: QUIZ)
 }
 
-type Query @join__type(graph: PLAYER) @join__type(graph: QUIZ) {
+type Query
+  @join__type(graph: PLAYER)
+  @join__type(graph: QUIZ)
+{
   player(playerId: ID!): Player @join__field(graph: PLAYER)
+  playersForAQuiz(quizId: ID!): [Player!]! @join__field(graph: PLAYER)
   allQuizzes: [Quiz!]! @join__field(graph: QUIZ)
   leaderboardForQuiz(id: ID!): Leaderboard @join__field(graph: QUIZ)
 }
 
-type Question @join__type(graph: QUIZ, key: "id") {
+type Question
+  @join__type(graph: QUIZ, key: "id")
+{
   id: ID!
   title: String!
   choices: [Choice!]!
 }
 
-type Quiz @join__type(graph: QUIZ, key: "id") {
+type Quiz
+  @join__type(graph: QUIZ, key: "id")
+{
   id: ID!
   title: String!
   questions: [Question!]!
 }
 
-type Subscription @join__type(graph: QUIZ) {
-  """
-  Listens for changes in what question to show now for a quiz
-  """
-  newQuestion(quizId: ID!): Question!
-  leaderboardForQuiz(id: ID!): Leaderboard!
+type Response
+  @join__type(graph: QUIZ)
+{
+  success: Boolean!
+  right_choice: Choice!
+}
+
+type Subscription
+  @join__type(graph: PLAYER)
+  @join__type(graph: QUIZ)
+{
+  playersForAQuiz(quizId: ID!): [Player!]! @join__field(graph: PLAYER)
+
+  """Listens for changes in what question to show now for a quiz"""
+  newQuestion(quizId: ID!): Question! @join__field(graph: QUIZ)
+  leaderboardForQuiz(id: ID!): Leaderboard! @join__field(graph: QUIZ)
 }

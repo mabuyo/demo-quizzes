@@ -18,13 +18,19 @@ extend schema
 
 type Query {
   player(playerId: ID!): Player
+  playersForAQuiz(quizId: ID!): [Player!]!
+}
+
+type Subscription {
+  playersForAQuiz(quizId: ID!): [Player!]!
 }
 
 type Mutation {
-  createPlayer(userName: String): Player
+  createPlayer(userName: String, quizId: ID!): Player
 }
 
 type Player @key(fields: "id") {
   id: ID!
   name: String!
+  quizId: ID!
 }
