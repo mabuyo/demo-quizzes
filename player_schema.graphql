@@ -1,0 +1,30 @@
+extend schema
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.4"
+    import: [
+      "@key"
+      "@extends"
+      "@shareable"
+      "@inaccessible"
+      "@override"
+      "@external"
+      "@provides"
+      "@requires"
+      "@tag"
+      "@composeDirective"
+      "@interfaceObject"
+    ]
+  )
+
+type Query {
+  player(playerId: ID!): Player
+}
+
+type Mutation {
+  createPlayer(userName: String): Player
+}
+
+type Player @key(fields: "id") {
+  id: ID!
+  name: String!
+}
