@@ -79,5 +79,4 @@ type Quiz @key(fields: "id") {
 type Player @key(fields: "id") {
   id: ID!
   points: Int
-  rank: Int
 }
