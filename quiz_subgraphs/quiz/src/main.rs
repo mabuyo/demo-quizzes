@@ -52,9 +52,9 @@ fn app() -> Router {
         .finish();
 
     Router::new()
-        .route("/", get(graphiql).post(simple_graphql_handler))
         .layer(CorsLayer::permissive())
         .layer(ServiceBuilder::new().layer(Extension(schema.clone())))
+        .route("/", get(graphiql).post(simple_graphql_handler))
         .route_service("/ws", GraphQLSubscription::new(schema))
 }
 
