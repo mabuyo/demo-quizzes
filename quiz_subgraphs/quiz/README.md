@@ -4,7 +4,7 @@
 + Launch the subgraph using `cargo run`
 + It will expose GraphQL server on http://localhost:4005 by default (without any path in the URL).
 + If you want to change the port, simply expose another `PORT` env variable.
-+ If you use the explorer, be careful the websocket url is exposed on `http://localhost:4005/ws`
++ If you use the explorer, be careful the websocket url is exposed on `ws://localhost:4005/ws`
 
 # Test a scenario
 
