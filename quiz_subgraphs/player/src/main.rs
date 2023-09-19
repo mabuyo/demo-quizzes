@@ -66,7 +66,7 @@ fn app() -> Router {
 async fn main() {
     let app = app();
     let port = std::env::var("PORT")
-        .unwrap_or_else(|_| "4005".to_string())
+        .unwrap_or_else(|_| "4006".to_string())
         .parse::<u16>()
         .unwrap();
 

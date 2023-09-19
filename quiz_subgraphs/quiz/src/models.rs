@@ -36,6 +36,15 @@ impl InMemoryDb {
         }
     }
 
+    pub(crate) async fn get_player_points(&self, player_id: &ID, quiz_id: &ID) -> Option<usize> {
+        self.leaderboard
+            .read()
+            .await
+            .get(quiz_id)?
+            .get(player_id)
+            .cloned()
+    }
+
     pub(crate) async fn compute_leaderboard(&self, quiz_id: &ID) -> Option<Leaderboard> {
         let quiz = self.quizzes.read().await.get(quiz_id)?.clone();
         self.leaderboard.read().await.get(quiz_id).map(|players| {
@@ -44,6 +53,7 @@ impl InMemoryDb {
                 .map(|(player_id, points)| Player {
                     id: player_id.clone(),
                     points: *points,
+                    quiz_id: quiz_id.clone(),
                 })
                 .collect();
 
@@ -201,6 +211,31 @@ impl QueryRoot {
 
         in_memory_db.compute_leaderboard(&id).await
     }
+
+    #[graphql(entity)]
+    async fn find_player_by_id_and_quiz_id<'ctx>(
+        &self,
+        ctx: &Context<'ctx>,
+        id: ID,
+        quiz_id: ID,
+    ) -> Player {
+        let in_memory_db: &InMemoryDb = ctx.data_unchecked();
+        let points = in_memory_db
+            .get_player_points(&id, &quiz_id)
+            .await
+            .unwrap_or_default();
+        Player {
+            id,
+            quiz_id,
+            points,
+        }
+    }
+
+    #[graphql(entity)]
+    async fn find_quiz_by_id<'ctx>(&self, ctx: &Context<'ctx>, id: ID) -> Option<Quiz> {
+        let in_memory_db: &InMemoryDb = ctx.data_unchecked();
+        in_memory_db.get_quiz(&id).await
+    }
 }
 
 pub(crate) struct SubscriptionRoot;
@@ -281,6 +316,8 @@ impl MutationRoot {
 #[derive(Clone, SimpleObject, Debug)]
 pub(crate) struct Player {
     pub(crate) id: ID,
+    #[graphql(external)]
+    pub(crate) quiz_id: ID,
     pub(crate) points: usize,
 }
 

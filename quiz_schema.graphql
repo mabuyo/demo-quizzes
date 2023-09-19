@@ -57,7 +57,7 @@ type Response {
   """
   What was the right choice
   """
-  right_choice: Choice!
+  rightChoice: Choice!
 }
 
 type Choice {
@@ -76,7 +76,8 @@ type Quiz @key(fields: "id") {
   questions: [Question!]!
 }
 
-type Player @key(fields: "id") {
+type Player @key(fields: "id quizId") {
   id: ID!
+  quizId: ID! @external
   points: Int
 }
