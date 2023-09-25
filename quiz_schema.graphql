@@ -18,7 +18,7 @@ extend schema
 
 type Mutation {
   "For an user who answers to a question in a quiz"
-  answer(quizId: ID!, questionId: ID!, choiceId: ID): Result!
+  answer(quizId: ID!, questionId: ID!, choiceId: ID): Response!
   "For admin to trigger the next question"
   nextQuestion(quizId: ID!): Question
 }
@@ -49,7 +49,7 @@ type Question @key(fields: "id") {
   choices: [Choice!]!
 }
 
-type Result {
+type Response {
   """
   Was it the right answer
   """
@@ -57,7 +57,7 @@ type Result {
   """
   What was the right choice
   """
-  right_choice: Choice!
+  rightChoice: Choice!
 }
 
 type Choice {
@@ -76,8 +76,8 @@ type Quiz @key(fields: "id") {
   questions: [Question!]!
 }
 
-type Player @key(fields: "id") {
+type Player @key(fields: "id quizId") {
   id: ID!
+  quizId: ID! @external
   points: Int
-  rank: Int
 }
