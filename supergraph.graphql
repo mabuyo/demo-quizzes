@@ -80,7 +80,7 @@ type Mutation @join__type(graph: PLAYER) @join__type(graph: QUIZ) {
   """
   Join a quiz with a username
   """
-  createPlayer(userName: String, quizId: ID!): Player
+  createPlayer(userName: String!, quizId: ID!): Player
     @join__field(graph: PLAYER)
 
   """

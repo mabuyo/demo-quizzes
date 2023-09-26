@@ -274,7 +274,12 @@ impl MutationRoot {
         question_id: ID,
         choice_id: Option<ID>,
     ) -> async_graphql::Result<Response> {
-        let player_id: &ID = ctx.data_unchecked();
+        let player_id: &ID = match ctx.data_opt() {
+            Some(id) => id,
+            None => {
+                return Err("cannot find the player header".into());
+            }
+        };
 
         let in_memory_db: &InMemoryDb = ctx.data_unchecked();
 

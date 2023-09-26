@@ -28,11 +28,8 @@ async fn simple_graphql_handler(
     let mut req = req.into_inner();
     if let Some(player_id) = get_player_id_from_headers(&headers) {
         req = req.data(player_id);
-    } else {
-        return GraphQLResponse::from(async_graphql::Response::from_errors(vec![
-            ServerError::new("cannot find the player header", None),
-        ]));
     }
+
     schema.execute(req).await.into()
 }
 

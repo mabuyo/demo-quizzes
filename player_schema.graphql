@@ -38,7 +38,7 @@ type Mutation {
   """
   Join a quiz with a username
   """
-  createPlayer(userName: String, quizId: ID!): Player
+  createPlayer(userName: String!, quizId: ID!): Player
 }
 
 type Player @key(fields: "id") {
