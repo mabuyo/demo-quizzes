@@ -101,6 +101,18 @@ impl QueryRoot {
 
         in_memory_db.players_for_quiz(&quiz_id).await
     }
+
+    #[graphql(entity)]
+    async fn find_player_by_id_and_quiz_id<'ctx>(
+        &self,
+        ctx: &Context<'ctx>,
+        id: ID,
+        quiz_id: ID,
+    ) -> Option<Player> {
+        let in_memory_db: &InMemoryDb = ctx.data_unchecked();
+        let player = in_memory_db.get_player(&id).await;
+        player
+    }
 }
 
 pub(crate) struct SubscriptionRoot;

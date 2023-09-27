@@ -78,6 +78,6 @@ type Quiz @key(fields: "id") {
 
 type Player @key(fields: "id quizId") {
   id: ID!
-  quizId: ID! @external
+  quizId: ID!
   points: Int
 }

@@ -41,7 +41,7 @@ type Mutation {
   createPlayer(userName: String!, quizId: ID!): Player
 }
 
-type Player @key(fields: "id") {
+type Player @key(fields: "id quizId") {
   id: ID!
   name: String!
   quizId: ID!
