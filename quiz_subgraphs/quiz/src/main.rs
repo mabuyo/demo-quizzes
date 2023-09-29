@@ -1,7 +1,7 @@
 mod models;
 
 use async_graphql::http::GraphiQLSource;
-use async_graphql::{Schema, ServerError, ID};
+use async_graphql::{Schema, ID};
 use async_graphql_axum::{GraphQLRequest, GraphQLResponse, GraphQLSubscription};
 use axum::response::IntoResponse;
 use axum::routing::get;
