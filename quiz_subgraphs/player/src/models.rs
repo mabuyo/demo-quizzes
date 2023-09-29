@@ -9,6 +9,7 @@ use tokio::sync::{
 use tokio_stream::wrappers::BroadcastStream;
 use uuid::Uuid;
 
+#[derive(Default)]
 pub(crate) struct InMemoryDb {
     players: RwLock<HashMap<ID, Player>>,
 }
@@ -62,12 +63,20 @@ impl InMemoryBroker {
     pub(crate) async fn subscribe_new_players(
         &self,
         quiz_id: &ID,
-    ) -> Option<impl Stream<Item = Vec<Player>>> {
-        let players_stream = self.players.read().await.get(quiz_id).map(|s| {
-            BroadcastStream::new(s.subscribe())
-                .filter_map(|e| async move { e.ok() })
-                .boxed()
-        });
+    ) -> impl Stream<Item = Vec<Player>> {
+        {
+            let players = self.players.read().await;
+            if let Some(player) = players.get(quiz_id) {
+                return BroadcastStream::new(player.subscribe())
+                    .filter_map(|e| async move { e.ok() })
+                    .boxed();
+            }
+        }
+        let (tx, rx) = broadcast::channel(2);
+        self.players.write().await.insert(quiz_id.clone(), tx);
+        let players_stream = BroadcastStream::new(rx)
+            .filter_map(|e| async move { e.ok() })
+            .boxed();
 
         players_stream
     }
@@ -125,11 +134,8 @@ impl SubscriptionRoot {
         quiz_id: ID,
     ) -> async_graphql::Result<impl Stream<Item = Vec<Player>>> {
         let in_memory_broker: &InMemoryBroker = ctx.data_unchecked();
-
-        in_memory_broker
-            .subscribe_new_players(&quiz_id)
-            .await
-            .ok_or_else(|| async_graphql::Error::new("quiz not found"))
+        let player_stream = in_memory_broker.subscribe_new_players(&quiz_id).await;
+        Ok(player_stream)
     }
 }
 
@@ -164,22 +170,4 @@ pub(crate) struct Player {
     pub(crate) id: ID,
     pub(crate) name: String,
     pub(crate) quiz_id: ID,
-}
-
-impl Default for InMemoryDb {
-    fn default() -> Self {
-        Self {
-            players: RwLock::new(
-                [(
-                    ID::from("0"),
-                    Player {
-                        id: ID::from("0"),
-                        name: String::from("test"),
-                        quiz_id: ID::from("0"),
-                    },
-                )]
-                .into(),
-            ),
-        }
-    }
 }
