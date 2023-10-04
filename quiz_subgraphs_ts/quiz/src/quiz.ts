@@ -57,7 +57,7 @@ const QUIZZES: Record<string, Quiz> = {
     questions: [
       {
         id: "0",
-        title: "How many different modes are available for subscription ?",
+        title: "How many protocols are currently supported by the Apollo Router for subscriptions?",
         choices: [
           {
             id: "0",
@@ -81,23 +81,23 @@ const QUIZZES: Record<string, Quiz> = {
       {
         id: "1",
         title:
-          "How is handled the subscription connection from the client to the Router ?",
+          "In this Kahoot clone app, which protocol is used for the connection between the client and the router?",
         choices: [
           {
             id: "0",
-            text: "Using HTTP multipart connection",
+            text: "HTTP multipart connection",
           },
           {
             id: "1",
-            text: "Using SSE",
+            text: "Sever-sent events (SSE)",
           },
           {
             id: "2",
-            text: "Using WebSocket",
+            text: "WebSocket protocol",
           },
           {
             id: "3",
-            text: "Using GRPC",
+            text: "Google Remote Procedure Call (gRPC)",
           },
         ],
         goodAnswer: "0",
