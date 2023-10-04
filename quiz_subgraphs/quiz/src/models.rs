@@ -374,7 +374,7 @@ impl Default for InMemoryDb {
                         questions: vec![Question {
                             id: ID::from("0"),
                             title: String::from(
-                                "How many different modes are available for subscription ?",
+                                "How many protocols are currently supported by the Apollo Router for subscriptions?",
                             ),
                             choices: vec![
                                 Choice {
@@ -398,24 +398,24 @@ impl Default for InMemoryDb {
                         }, Question {
                             id: ID::from("1"),
                             title: String::from(
-                                "How is handled the subscription connection from the client to the Router ?",
+                                "In this Kahoot clone app, which protocol is used for the connection between the client and the router?",
                             ),
                             choices: vec![
                                 Choice {
                                     id: ID::from("0"),
-                                    text: String::from("Using HTTP multipart connection"),
+                                    text: String::from("HTTP multipart connection"),
                                 },
                                 Choice {
                                     id: ID::from("1"),
-                                    text: String::from("Using SSE"),
+                                    text: String::from("Server-side events (SSE)"),
                                 },
                                 Choice {
                                     id: ID::from("2"),
-                                    text: String::from("Using WebSocket"),
+                                    text: String::from("WebSockets"),
                                 },
                                 Choice {
                                     id: ID::from("3"),
-                                    text: String::from("Using GRPC"),
+                                    text: String::from("Google Remote Procedure Call (gRPC)"),
                                 },
                             ],
                             good_answer: ID::from("0"),
