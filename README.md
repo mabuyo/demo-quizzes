@@ -1,24 +1,48 @@
-# Kahoot Clone Demo App
+# Kahoot Clone Demo App - Subgraphs
 
-## How to run it with Apollo Router
+Welcome to the project for GraphQL Summit 2023 "Federated Subscriptions in GraphOS" workshop!
 
-- Launch quiz and player subgraphs
+## ⚠️ Before the workshop
 
-```shell
-# Run the player subgraph (by default it listens on port 4006)
-cd quiz_subgraphs/player
-cargo run
-cd -
-# Run the quiz subgraph (by default it listens on port 4005)
-cd quiz_subgraphs/quiz
-cargo run
-cd -
-```
+Please complete the following pre-requisites and installations before the workshop.
 
-- Launch the router (listening on port 4000 by default)
+You will need:
 
-```shell
-export APOLLO_KEY=XXX
-export APOLLO_GRAPH_REF=XXX
-./router --supergraph supergraph.graphql --config router-config.yaml --hot-reload
-```
+- [ ] An Apollo GraphOS account with either:
+  - An Enterprise plan, with at least [Contributor access](https://www.apollographql.com/docs/graphos/org/members/#organization-wide-member-roles) in your organization.
+  - An [Enterprise Trial](https://studio.apollographql.com/signup?type=enterprise-trial), for those without an Enterprise plan.
+- [ ] [Download the Apollo Router binary](https://www.apollographql.com/docs/router/quickstart#download-options).
+- [ ] [Install the Rover CLI](https://www.apollographql.com/docs/rover/getting-started#installation-methods).
+- [ ] [Authenticate the Rover CLI](https://www.apollographql.com/docs/rover/configuring#authenticating-with-graphos).
+  - You can use a [personal API key](https://www.apollographql.com/docs/graphos/api-keys/#personal-api-keys).
+- [ ] Go to the `client` app repository and follow the README instructions there: https://github.com/apollographql/demo-kahoot-clone-client
+- [ ] Clone this repository.
+- [ ] Follow the installation instructions for your chosen language below.
+
+#### TypeScript
+
+1. Navigate to the `quiz_subgraphs_ts` folder.
+
+1. Navigate to the `quiz` folder.
+
+1. Run `npm i`, then `npm run watch`. This will run the quiz subgraph on port 4005.
+
+1. Navigate to the `quiz_subgraphs_ts/player` folder.
+
+1. Run `npm i` then `npm run watch`. This will run the player subgraph on port 4006.
+
+#### Rust
+
+1. Navigate to the `quiz_subgraphs` folder.
+
+1. Navigate to the `quiz` folder. This will run the quiz subgraph on port 4005.
+
+1. Run `cargo run`.
+
+1. Navigate to the `quiz_subgraphs_ts/player` folder.
+
+1. Run `cargo run`. This will run the player subgraph on port 4006.
+
+## Getting help
+
+For any issues or problems, [join us on Discord](https://discord.gg/graphos) in the #summit-workshops channel.
