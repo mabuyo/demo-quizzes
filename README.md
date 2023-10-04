@@ -33,13 +33,13 @@ You will need:
 
 #### Rust
 
-1. Navigate to the `quiz_subgraphs` folder.
+1. Navigate to the `quiz_subgraphs/rs` folder.
 
 1. Navigate to the `quiz` folder. This will run the quiz subgraph on port 4005.
 
 1. Run `cargo run`.
 
-1. Navigate to the `quiz_subgraphs_ts/player` folder.
+1. Navigate to the `quiz_subgraphs_rs/player` folder.
 
 1. Run `cargo run`. This will run the player subgraph on port 4006.
 
