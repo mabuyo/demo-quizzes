@@ -6,13 +6,13 @@ health_check:
   enabled: false
 
 supergraph:
+  # The socket address and port to listen on
+  # Required for Heroku
+  # In DEV environment, uncomment this config
+  listen: "0.0.0.0:${env.PORT}"
   path: /
   defer_support: true
   introspection: true
-sandbox:
-  enabled: true
-homepage:
-  enabled: false
 subscription:
   enabled: true
   mode:
@@ -33,8 +33,3 @@ telemetry:
     format: pretty
     display_filename: true
     display_line_number: true
-    # when_header:
-    #   - name: "origin"
-    #     match: ".*"
-    #     headers: false
-    #     body: true
