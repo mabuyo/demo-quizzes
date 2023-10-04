@@ -18,7 +18,7 @@ extend schema
 
 type Mutation {
   "For an user who answers to a question in a quiz"
-  answer(quizId: ID!, choiceId: ID): Response!
+  answer(quizId: ID!, questionId: ID!, choiceId: ID): Response!
   "For admin to trigger the next question"
   nextQuestion(quizId: ID!): Question
 }

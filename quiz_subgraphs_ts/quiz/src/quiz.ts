@@ -57,7 +57,8 @@ const QUIZZES: Record<string, Quiz> = {
     questions: [
       {
         id: "0",
-        title: "How many protocols are currently supported by the Apollo Router for subscriptions?",
+        title:
+          "How many protocols are currently supported by the Apollo Router for subscriptions?",
         choices: [
           {
             id: "0",
@@ -151,7 +152,11 @@ const resolvers = {
   Mutation: {
     answer(
       _: any,
-      { quizId, choiceId }: { quizId: string; choiceId: string },
+      {
+        quizId,
+        questionId,
+        choiceId,
+      }: { quizId: string; questionId: string; choiceId: string },
       { playerId }: any
     ): Response {
       if (!playerId) {
