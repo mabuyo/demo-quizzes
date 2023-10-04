@@ -109,7 +109,7 @@ const server = new ApolloServer({
 await server.start();
 app.use("/", cors(), json(), expressMiddleware(server));
 
-const PORT = 4006;
+const PORT = process.env.PORT || 4006;
 httpServer.listen(PORT, () => {
   console.log(`🚀 Player subgraph ready at http://localhost:${PORT}/`);
 });

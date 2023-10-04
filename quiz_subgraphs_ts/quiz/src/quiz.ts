@@ -275,7 +275,7 @@ app.use(
   })
 );
 
-const PORT = 4005;
+const PORT = process.env.PORT || 4005;
 httpServer.listen(PORT, () => {
   console.log(`🚀 Quiz subgraph ready at http://localhost:${PORT}/`);
 });
