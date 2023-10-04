@@ -11,6 +11,7 @@ import { WebSocketServer } from "ws";
 import { useServer } from "graphql-ws/lib/use/ws";
 import gql from "graphql-tag";
 import { readFileSync } from "fs";
+import { PubSub } from "graphql-subscriptions";
 
 function uuid() {
   return Math.random().toString(36).substring(2, 9);
@@ -21,6 +22,8 @@ interface Player {
   name: string;
   quizId: string;
 }
+
+const pubsub = new PubSub();
 
 const PLAYERS: Record<string, Player> = {};
 
@@ -54,26 +57,24 @@ const resolvers = {
     createPlayer(
       _: any,
       { userName, quizId }: { userName: string; quizId: string }
-    ) {
+    ): Player {
       const player: Player = {
         id: uuid(),
         name: userName,
         quizId,
       };
       PLAYERS[player.id] = player;
+      pubsub.publish("CREATE_PLAYER", {
+        playersForAQuiz: playersForAQuiz(quizId),
+      });
+      return player;
     },
   },
 
   Subscription: {
     playersForAQuiz: {
-      subscribe: async function* (_: any, { quizId }: { quizId: string }) {
-        let count = 0;
-        while (true) {
-          const quizPlayers = playersForAQuiz(quizId);
-          yield { playersForAQuiz: quizPlayers };
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          if (count === quizPlayers.length) count = 0;
-        }
+      subscribe() {
+        return pubsub.asyncIterator(["CREATE_PLAYER"]);
       },
     },
   },
@@ -85,7 +86,7 @@ const httpServer = createServer(app);
 const schema = buildSubgraphSchema({ typeDefs, resolvers });
 const wsServer = new WebSocketServer({
   server: httpServer,
-  path: "/",
+  path: "/ws",
 });
 const serverCleanup = useServer({ schema }, wsServer);
 

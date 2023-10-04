@@ -11,6 +11,7 @@ import { WebSocketServer } from "ws";
 import { useServer } from "graphql-ws/lib/use/ws";
 import gql from "graphql-tag";
 import { readFileSync } from "fs";
+import { PubSub } from "graphql-subscriptions";
 
 interface Choice {
   id: string;
@@ -46,6 +47,8 @@ interface Response {
   success: boolean;
   rightChoice: Choice;
 }
+
+const pubsub = new PubSub();
 
 const QUIZZES: Record<string, Quiz> = {
   "0": {
@@ -100,7 +103,7 @@ const QUIZZES: Record<string, Quiz> = {
         goodAnswer: "0",
       },
     ],
-    currentQuestion: -1,
+    currentQuestion: 0,
   },
 };
 
@@ -129,6 +132,12 @@ function getLeaderboard(quizId: string): Leaderboard {
 const typeDefs = gql(readFileSync("./quiz.graphql", { encoding: "utf-8" }));
 
 const resolvers = {
+  Quiz: {
+    __resolveReference(reference: Quiz) {
+      return QUIZZES[reference.id];
+    },
+  },
+
   Query: {
     allQuizzes() {
       return Object.values(QUIZZES);
@@ -175,6 +184,8 @@ const resolvers = {
         LEADERBOARD[quizId] = { [playerId]: increment };
       }
 
+      pubsub.publish("ANSWER", { leaderboardForQuiz: getLeaderboard(quizId) });
+
       return {
         success: !!increment,
         rightChoice,
@@ -203,28 +214,22 @@ const resolvers = {
         (question) => +question.id === quiz.currentQuestion
       );
 
+      pubsub.publish("NEXT_QUESTION", { newQuestion: question });
+
       return question;
     },
   },
 
   Subscription: {
     newQuestion: {
-      subscribe: async function* (_: any, { quizId }: { quizId: string }) {
-        while (true) {
-          const quiz = QUIZZES[quizId];
-          yield { newQuestion: quiz.questions[quiz.currentQuestion] };
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        }
+      subscribe() {
+        return pubsub.asyncIterator(["NEXT_QUESTION"]);
       },
     },
 
     leaderboardForQuiz: {
-      subscribe: async function* (_: any, { id }: { id: string }) {
-        while (true) {
-          const leaderboard = getLeaderboard(id);
-          yield { leaderboardForQuiz: leaderboard };
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        }
+      subscribe() {
+        return pubsub.asyncIterator(["ANSWER"]);
       },
     },
   },
@@ -236,7 +241,7 @@ const httpServer = createServer(app);
 const schema = buildSubgraphSchema({ typeDefs, resolvers });
 const wsServer = new WebSocketServer({
   server: httpServer,
-  path: "/",
+  path: "/ws",
 });
 const serverCleanup = useServer({ schema }, wsServer);
 
