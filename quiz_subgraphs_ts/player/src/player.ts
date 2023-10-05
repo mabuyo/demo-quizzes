@@ -36,10 +36,11 @@ function playersForAQuiz(quizId: string) {
 const resolvers = {
   Player: {
     __resolveReference(reference: Player) {
-      return Object.values(PLAYERS).find(
+      const player = Object.values(PLAYERS).find(
         (player) =>
           player.id === reference.id && player.quizId === reference.quizId
       );
+      return player;
     },
   },
 
